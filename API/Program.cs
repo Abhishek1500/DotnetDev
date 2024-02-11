@@ -1,7 +1,10 @@
+using System.Text;
 using API.Data;
 using API.Interfaces;
 using API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +34,20 @@ builder.Services.AddCors();
 //here even if without Implementing and directly using Token Service is also good
 //but testing thingh
 builder.Services.AddScoped<ITokenService,TokenService>();
+//here we are we are adding the service that tell that say if jwt token came how server should check it is good token
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options=>{
+    options.TokenValidationParameters=new TokenValidationParameters{
+        //check and look validity on the basis of issuer signing key in token and the key we give in second line otherwise all jwt accepted
+        ValidateIssuerSigningKey=true,
+        IssuerSigningKey=new SymmetricSecurityKey(Encoding.UTF8
+        .GetBytes(builder.Configuration["TokenKey"])),
+        //validate issuer to validate the third part kind of thing may be not sure
+        ValidateIssuer=false,
+        ValidateAudience=false
+    };
 
-
+});
 
 
 //here we are adding the dabcontext class to our program.cs so that we can use that context file 
@@ -56,9 +71,9 @@ var app = builder.Build();
 
 app.UseCors(builder=> builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
-// app.UseHttpsRedirection();
-
-//  app.UseAuthorization();
+app.UseAuthentication();
+//once the user is authenticated they can go to authenticated endpoint 
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -1,10 +1,15 @@
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
-public class UsersController : AppUser
+//now this will apply authorization required on each end point
+// look here the thing is that [AllowAnonamous] is something that bypass every authorization
+// therefore if you put it out for all and then put [authorization] for special then this authorization dont work
+[Authorize]
+public class UsersController : BaseApiController
 {
     public readonly DataContext _context;
 
@@ -30,6 +35,7 @@ public class UsersController : AppUser
     // consider the above commented code first and read comments this is its async version
     // now in async the Task is return
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AppUser>>> GetUsersAsync() //this is naming convention
     {
@@ -38,6 +44,7 @@ public class UsersController : AppUser
         //here the as we are sending the users as responce
         return users;
     }
+
 
     //once we make our code async the request is pass to another thread known delegates
     [HttpGet("{id}")] // /api/users/2
