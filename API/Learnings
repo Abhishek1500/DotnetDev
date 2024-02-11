@@ -5,3 +5,4 @@
 5. base API Controller (inheritance)
 6. parmeter and query string
 7. DTO
+8. validations at Dto level

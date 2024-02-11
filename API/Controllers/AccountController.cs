@@ -19,6 +19,7 @@ public class AccountController : BaseApiController{
 
     //by convention the parameters take the querystring as value
     //say we send api/Addcount/register?username=dam&password=password and query name should be same
+    // for validation is done in DTO the API Contoller first look for the validation in Dto
     public async Task<ActionResult<AppUser>> Register(RegisterDto registerDto){
         
         if (await UserExists(registerDto.UserName)) return BadRequest("UserName is Taken");
@@ -30,7 +31,7 @@ public class AccountController : BaseApiController{
         using var hmac=new HMACSHA512();
 
         var user=new AppUser{
-            UserName=registerDto.UserName,
+            UserName=registerDto.UserName.ToLower(),
             PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             //here this hamc key is randomly generated 
             PasswordSalt=hmac.Key
