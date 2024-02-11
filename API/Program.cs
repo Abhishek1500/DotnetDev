@@ -35,6 +35,8 @@ var app = builder.Build();
 //     app.UseSwaggerUI();
 // }
 
+//these are middleware
+//cors is for client side browser safety look into extensions for more info
 app.UseCors(builder=> builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
 
 app.UseAuthentication();
