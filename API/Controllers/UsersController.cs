@@ -4,12 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace API.Controllers;
 
-//here the controller will replaced by User
-//here we are using controller base for non vew mvc but for other we use Controller directly
-
-[ApiController]
-[Route("api/[Controller]")]  //this is like localhost:5000/apu/users
-public class UsersController : ControllerBase
+public class UsersController : AppUser
 {
     public readonly DataContext _context;
 
@@ -51,6 +46,4 @@ public class UsersController : ControllerBase
         // here sending single user as responce
         return user;
     }
-
-
 }
