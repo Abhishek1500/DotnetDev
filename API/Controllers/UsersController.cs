@@ -12,6 +12,7 @@ public class UsersController : AppUser
     //and once the work is done it got scoped out so no need to pass and oce the controller done with its 
     //work i.e. reseponce instance die
 
+    //here the parameters for the given constructor is obj of services that we added before kind of
     public UsersController(DataContext context)
     {
         _context = context;

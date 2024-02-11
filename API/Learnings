@@ -7,3 +7,9 @@
 7. DTO
 8. validations at Dto level
 9. login Dto and Login
+10. tokens
+        client====>server(send credential)
+        server====>client(send token)
+        clent====>server (request with authentication header not requied for stuff that dont want authentication)
+        server===>client (verify token and send response)
+11. How to make JWt in .net 
