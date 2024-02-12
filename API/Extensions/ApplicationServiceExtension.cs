@@ -6,7 +6,7 @@ namespace API.Extensions;
 
 public static class ApplicationServiceExtension{
 
-     public static IServiceCollection AddIdentityExtensions(this IServiceCollection service,IConfiguration config){
+     public static IServiceCollection AddApplicationService(this IServiceCollection service,IConfiguration config){
 
 
         //HERE THE CORS IS ADDED FOR SAFE DATA TRANSFER FROM SERVER TO angular app server

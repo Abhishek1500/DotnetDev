@@ -7,7 +7,7 @@ namespace API.Extensions;
 
 public static class IdentityServiceExtension {
 
-    public static IServiceCollection AddApplicationService(this IServiceCollection service,IConfiguration config){
+    public static IServiceCollection AddIdentityExtensions(this IServiceCollection service,IConfiguration config){
         
         //here we are we are adding the service that tell that say if jwt token came how server should check it is good token
             service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
