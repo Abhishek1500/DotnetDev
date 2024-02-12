@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { AccountService } from './_services/account.service';
+import { User } from './_models/user';
 //here the code is written in typescript
 @Component({
   selector: 'app-root',
@@ -15,21 +16,21 @@ export class AppComponent implements OnInit {
   title = 'Dating App';
   users: any; //turing off typescript safety
   //here this private ensure that whatever we use is accessible in this class
-  constructor(private http:HttpClient){}
+  constructor(private accountService: AccountService){}
 
   //this help us to initialize anything after the constructor is made
   //this get method return observable
   ngOnInit(): void {
-    //the observable once created it wont do anthing so for make it to read our data we need sunscribe 
-    //now in this subscribe we can say what we want to do with observable and it return oberver obj which go to api and give result
-    //this is like callbacks in Javascript async
-    //next is what we do when we get data
-    //error is optional 
-    // complete is something that we can do when request is completed because http reauest always complete
-    this.http.get("https://localhost:5000/api/users").subscribe({
-        next:response=>this.users=response,
-        error:er=>console.log(er),
-        complete:()=>console.log("requestCompleted")
-      });
+    this.setCurrentUser();
   }
+ 
+  setCurrentUser(){
+    const userString=localStorage.getItem('user');
+    if(!userString)return;
+    const user:User=JSON.parse(userString);
+    this.accountService.setCurrentUser(user);
+  }
+
+
+
 }
