@@ -31,6 +31,10 @@ public static class ApplicationServiceExtension{
             opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
         });
 
+        service.AddScoped<IuserRepository,UserRepository>();
+//telling where mapping profiles are
+        service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 
         return service;
     }

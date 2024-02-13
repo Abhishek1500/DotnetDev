@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using API.Extensions;
 
 namespace API.Entities;
 
@@ -11,4 +12,30 @@ public class AppUser{
 
     public byte[] PasswordHash{get;set;}
     public byte[] PasswordSalt{get;set;}
+
+    public DateTime DateOfBirth {get; set;}
+
+    public string knownAs{get;set;}
+    public DateTime Created {get;set;}=DateTime.UtcNow;
+
+    public DateTime LastActive {get; set;}=DateTime.UtcNow;
+
+    public string Gender {get; set;}
+
+    public string Introduction {get; set;}
+
+    public string LookingFor {get;set;}
+
+    public string Intrests {get; set;}
+    public string City {get; set;}
+    public string Countery {get; set;}
+     public List<Photo> Photos {get;set;}=new List<Photo>();
+
+    //here the auto mapper will be  good enough to know that GetAge is for Age but remember that Get Age name and Get is required
+     public int GetAge(){
+        return DateOfBirth.CalculateAge();
+     }
+
+
 }
+

@@ -26,8 +26,8 @@ public class BuggyController : BaseApiController
 
     public ActionResult<AppUser> GetNotFound()
     {
-        var thing=_context.Users.Find(-1);
-        if(thing==null) return NotFound();
+        AppUser thing=null;
+        thing.ToString();
         return thing;
     }
 

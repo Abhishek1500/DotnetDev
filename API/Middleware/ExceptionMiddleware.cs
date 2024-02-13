@@ -11,7 +11,8 @@ public class ExceptionMiddleware
     private readonly IHostEnvironment _env;
     //Ilogger is used to log  the exception
     //_env here is to check the environment
-    public ExceptionMiddleware(RequestDelegate next,ILogger<ExceptionMiddleware> logger,
+    public ExceptionMiddleware(RequestDelegate next,
+    ILogger<ExceptionMiddleware> logger,
     IHostEnvironment env)
     {
         _env=env;
