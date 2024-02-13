@@ -16,4 +16,5 @@
 12. how to authenticate when jwt come from user to server
 13. Extension and making your program.cs more apelable and modularize
 create controller using cli (ng g c name of component)
-14. 
+14. Error Handling  try catch not use it return satatuscode something new to see
+15. Middleware and req response way in middleware and error handling usnig middleware

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using API.Extensions;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 //Services can be in any sequence but the request pipeline should be in sequence as one run after other
@@ -28,7 +29,6 @@ builder.Services.AddIdentityExtensions(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
 // if (app.Environment.IsDevelopment())
 // {
 //     app.UseSwagger();
@@ -36,8 +36,18 @@ var app = builder.Build();
 // }
 
 //these are middleware
+
+
+app.UseMiddleware<ExceptionMiddleware>();
+
 //cors is for client side browser safety look into extensions for more info
-app.UseCors(builder=> builder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
+app.UseCors(builder=> builder.AllowAnyHeader().AllowAnyMethod()
+.WithOrigins("http://localhost:4200"));
+
+
+//use to show the exceptions ist a middleware inbuild in this program.cs but in production it wont show
+//app.UseDeveloperExceptionPage();
+//implemented with if of builder.Environment.idDevelopment()
 
 app.UseAuthentication();
 //once the user is authenticated they can go to authenticated endpoint 
@@ -47,3 +57,6 @@ app.MapControllers();
 
 app.Run();
 
+//here the error handling middleware that we talk about above 
+//present above all middleware therefore if error occour in any of the lower
+//middleware it pass back to above error pipeline
