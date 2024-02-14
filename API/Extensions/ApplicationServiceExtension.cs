@@ -2,6 +2,7 @@ using API.Interfaces;
 using API.Services;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
+using API.Helper;
 namespace API.Extensions;
 
 public static class ApplicationServiceExtension{
@@ -35,7 +36,8 @@ public static class ApplicationServiceExtension{
 //telling where mapping profiles are
         service.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
+        service.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+        service.AddScoped<IPhotoService,PhotoService>();
         return service;
     }
 

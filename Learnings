@@ -22,3 +22,6 @@ create controller using cli (ng g c name of component)
 17. Repository pattern
 18. probelem and loop problem etc include dto creation
 19. Automapper after mapping need to be injexted as service
+20. Post in .net using mapper great thing no need of patch at all 
+21. Rest API format
+22. Rest API statuscode: get(Ok)200 , for update nocontent 204 dont return result,create 201 created

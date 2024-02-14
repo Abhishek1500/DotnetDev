@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using API.Data;
 using API.DTO;
 using API.Entities;
+using API.Extensions;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -16,16 +18,17 @@ public class UsersController : BaseApiController
 {
     private readonly IuserRepository _userRepository;
     private readonly IMapper _mapper;
-
+    private readonly IPhotoService _photoService;
     //here in this userController constructor the DataContext context instance is created with http request 
     //and once the work is done it got scoped out so no need to pass and oce the controller done with its 
     //work i.e. reseponce instance die
 
     //here the parameters for the given constructor is obj of services that we added before kind of
-    public UsersController(IuserRepository userRepository,IMapper mapper)
+    public UsersController(IuserRepository userRepository,IMapper mapper,IPhotoService photoService)
     {
         _userRepository = userRepository;
         _mapper=mapper;
+        _photoService=photoService;
     }
     //cant use var it is accessible only in local in webapi
     //here ActionResult is a return type of a //controller// method way of saying but read indepth to know more
@@ -59,12 +62,50 @@ public class UsersController : BaseApiController
 
 
     //once we make our code async the request is pass to another thread known delegates
-    [HttpGet("{id}")] // /api/users/2
+    [HttpGet("{username}")] // /api/users/2
     public async Task<ActionResult<MemberDto>> GetUserAsync(string username)
     {
         return await _userRepository.GetMemberAsync(username);
         // here sending single user as responce
         // var useroutput=_mapper.Map<MemberDto>(user);
         // return Ok(useroutput);
+    }
+
+
+    //here the User in this is Not the model or somthing it is System.Security.Claim principle
+    //for accessing token and claims in it
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto){
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if(user==null) return NotFound();
+        _mapper.Map(memberUpdateDto,user);
+        //error handling for save changes dont work
+        //what save changes do is return the no. of changes it made (changes like git if no change in content it wont rewrite it)
+        if(await _userRepository.SaveAllAsync()) return NoContent();
+        return BadRequest("failed to update user");
+    }
+
+
+    [HttpPost("add-photo")]
+    public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file){
+        var user=await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        if(user==null) return NotFound();
+        //AddPhotoAsync
+        var result=await _photoService.AddPhotoAsync(file);
+        if(result.Error!=null) return BadRequest(result.Error.Message);
+        var photo=new Photo{
+            Url=result.SecureUrl.AbsoluteUri,
+            PublicId=result.PublicId
+        };
+
+        if(user.Photos.Count==0){
+            photo.IsMain=true;
+        }
+        user.Photos.Add(photo);
+        if(await _userRepository.SaveAllAsync()) 
+        return CreatedAtAction(nameof(GetUserAsync),
+        new {username=user.UserName},
+        _mapper.Map<PhotoDto>(photo));
+        return BadRequest("Problem adding photo");
     }
 }
