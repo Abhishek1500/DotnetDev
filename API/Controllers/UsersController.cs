@@ -46,12 +46,15 @@ public class UsersController : BaseApiController
     {
         //dut to action result it domt take ienumerable so use either to list or ok
         //toListAsync is coming from entity framework
-        var user =await _userRepository.getUsersAsync();
-        //here the user in IEnumerable of AppUser therefore such a way
-        var userstoReturn=_mapper.Map<IEnumerable<MemberDto>>(user);
-        return userstoReturn.ToList();
-        //here the as we are sending the users as responce
+        var users = await _userRepository.GetMemberAsync();
         
+        return Ok(users);
+        //here the user in IEnumerable of AppUser therefore such a way
+        // var userstoReturn=_mapper.Map<IEnumerable<MemberDto>>(user);
+        // return userstoReturn.ToList();
+        //here the as we are sending the users as responce
+      //here when we send data we send the open flat data that is ref to ref due to include and to save it userd mapper
+      //basically json open it and heart attack came.  
     }
 
 
@@ -59,9 +62,9 @@ public class UsersController : BaseApiController
     [HttpGet("{id}")] // /api/users/2
     public async Task<ActionResult<MemberDto>> GetUserAsync(string username)
     {
-        AppUser user = await _userRepository.GetUserByUsernameAsync(username);
+        return await _userRepository.GetMemberAsync(username);
         // here sending single user as responce
-        var useroutput=_mapper.Map<MemberDto>(user);
-        return Ok(useroutput);
+        // var useroutput=_mapper.Map<MemberDto>(user);
+        // return Ok(useroutput);
     }
 }

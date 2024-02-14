@@ -18,4 +18,7 @@
 create controller using cli (ng g c name of component)
 14. Error Handling  try catch not use it return satatuscode something new to see
 15. Middleware and req response way in middleware and error handling usnig middleware
-16. 
+16. Ef relations and nullable true 
+17. Repository pattern
+18. probelem and loop problem etc include dto creation
+19. Automapper after mapping need to be injexted as service
