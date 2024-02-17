@@ -7,17 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.DTO;
 using API.Interfaces;
+using AutoMapper;
 namespace APi.Controller;
 //DTO=>Data transfer object basically do one thingh it encapsulate the data and transfer it from one app to another
 //and also used as select as linq to create new obj with required fields
 public class AccountController : BaseApiController{
     DataContext _context;
     ITokenService _tokenService;
-    IuserRepository _userRepository;
-    public AccountController(DataContext context,ITokenService tokenService,IuserRepository userRepository){
+    IMapper _mapper;
+    public AccountController(DataContext context,ITokenService tokenService,IMapper mapper){
         _context=context;
         _tokenService=tokenService;
-        _userRepository=userRepository;
+        _mapper=mapper;
     }
 
     [HttpPost("register")]//Post: api/account/register
@@ -34,13 +35,12 @@ public class AccountController : BaseApiController{
         //then it will be deleted by garbage collector if it is not refrenced but we dont know when because we delete the refrence not object
         // what using will do once the refrence die the object also die because of dispose methon inside its parent class it  is disposable class remember I dont know about other classes
         using var hmac=new HMACSHA512();
-
-        var user=new AppUser{
-            UserName=registerDto.UserName.ToLower(),
-            PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+        var user=_mapper.Map<AppUser>(registerDto);
+        
+            user.UserName=registerDto.UserName.ToLower();
+            user.PasswordHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
             //here this hamc key is randomly generated 
-            PasswordSalt=hmac.Key
-        };
+            user.PasswordSalt=hmac.Key;
         //Console.WriteLine(hmac.Key.SequenceEqual(user.PasswordSalt));
         //here we are just telling ef to add this to db it is not adding anything
         _context.Users.Add(user);
@@ -49,7 +49,7 @@ public class AccountController : BaseApiController{
         return new UserDto{
             Username=user.UserName,
             Token=_tokenService.CreateToken(user),
-            
+            KnownAs=user.knownAs
         };
     }
 
@@ -65,8 +65,10 @@ public class AccountController : BaseApiController{
         return new UserDto{
             Username=user.UserName,
             Token=_tokenService.CreateToken(user),
-            PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
+            PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url,
+            KnownAs=user.knownAs
         };
+
     }
 
 
