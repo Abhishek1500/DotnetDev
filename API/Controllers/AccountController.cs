@@ -13,9 +13,11 @@ namespace APi.Controller;
 public class AccountController : BaseApiController{
     DataContext _context;
     ITokenService _tokenService;
-    public AccountController(DataContext context,ITokenService tokenService){
+    IuserRepository _userRepository;
+    public AccountController(DataContext context,ITokenService tokenService,IuserRepository userRepository){
         _context=context;
         _tokenService=tokenService;
+        _userRepository=userRepository;
     }
 
     [HttpPost("register")]//Post: api/account/register
@@ -46,14 +48,15 @@ public class AccountController : BaseApiController{
         await _context.SaveChangesAsync();
         return new UserDto{
             Username=user.UserName,
-            Token=_tokenService.CreateToken(user)
+            Token=_tokenService.CreateToken(user),
+            
         };
     }
 
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login(LoginDto loginDto){
-        var user=await _context.Users.SingleOrDefaultAsync(x=>x.UserName==loginDto.Username.ToLower());
+        var user=await _context.Users.Include(x=>x.Photos).SingleOrDefaultAsync(x=>x.UserName==loginDto.Username.ToLower());
         if(user==null) return Unauthorized("Invalid User Name");
         using var hmac=new HMACSHA512(user.PasswordSalt);
         var computedhash=hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
@@ -61,7 +64,8 @@ public class AccountController : BaseApiController{
         Console.WriteLine(user.UserName);
         return new UserDto{
             Username=user.UserName,
-            Token=_tokenService.CreateToken(user)
+            Token=_tokenService.CreateToken(user),
+            PhotoUrl=user.Photos.FirstOrDefault(x=>x.IsMain)?.Url
         };
     }
 
