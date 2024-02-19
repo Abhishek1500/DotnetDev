@@ -1,16 +1,17 @@
 using API.DTO;
 using API.Extensions;
+using API.Helper;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
-public class LikeController : BaseApiController
+public class LikesController : BaseApiController
 {
     private readonly IuserRepository _userRepository;
     private readonly ILikesRepository _likesRepository;
     
-    public LikeController(IuserRepository userRepository,ILikesRepository likesRepository){
+    public LikesController(IuserRepository userRepository,ILikesRepository likesRepository){
         _likesRepository=likesRepository;
         _userRepository=userRepository;
     }
@@ -36,7 +37,12 @@ public class LikeController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<LikeDto>>> getUserLikes(string predicate){
-        var users=await _likesRepository.GetUserLikes(predicate,User.GetUserId());
+    public async Task<ActionResult<PageList<LikeDto>>> getUserLikes([FromQuery]LikesParams likeParams){
+        
+
+        likeParams.UserId=User.GetUserId();
+        var users=await _likesRepository.GetUserLikes(likeParams);
+        Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage,users.PageSize,users.TotalCount,users.TotalPages));
+        return Ok(users);
     }
 }

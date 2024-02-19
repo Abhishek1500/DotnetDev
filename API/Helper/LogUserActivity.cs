@@ -13,11 +13,11 @@ public class LogUserActivity : IAsyncActionFilter
         //here if you want other way around use Executingcontext
         var resultContext=await next();
         if(!resultContext.HttpContext.User.Identity.IsAuthenticated) return;
-        var username=resultContext.HttpContext.User.GetUsername();
-        
+        var userId=resultContext.HttpContext.User.GetUserId();
+        // Console.WriteLine("Hello "+username);
         var repo=resultContext.HttpContext.RequestServices.GetRequiredService<IuserRepository>();
-        var user=await repo.GetUserByUsernameAsync(username);
-        Console.WriteLine(username);
+        var user=await repo.GetUserByIdAsync(userId);
+        // Console.WriteLine(username);
         user.LastActive=DateTime.UtcNow;
         await repo.SaveAllAsync();
 
