@@ -25,7 +25,8 @@ public class TokenService : ITokenService
         //these are the claims in payload that user is having and saying that i am this when he send the jwt back to server
         var claims=new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.NameId,user.UserName)
+            new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName)
         };
 
         //signing the signature part

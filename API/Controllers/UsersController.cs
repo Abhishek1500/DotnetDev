@@ -3,6 +3,7 @@ using API.Data;
 using API.DTO;
 using API.Entities;
 using API.Extensions;
+using API.Helper;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -45,12 +46,19 @@ public class UsersController : BaseApiController
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersAsync() //this is naming convention
-    {
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsersAsync([FromQuery]UserParams userParams) //this is naming convention
+    {   
+
+        var currentUser=await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        userParams.CurrentUserName=currentUser.UserName;
+
+        if(string.IsNullOrEmpty(userParams.Gender)){
+            userParams.Gender=currentUser.Gender=="male" ? "female":"male";
+        }
         //dut to action result it domt take ienumerable so use either to list or ok
         //toListAsync is coming from entity framework
-        var users = await _userRepository.GetMemberAsync();
-        
+        var users = await _userRepository.GetMemberAsync(userParams);
+        Response.AddPaginationHeader(new PaginationHeader(users.CurrentPage,users.PageSize,users.TotalCount,users.TotalPages));
         return Ok(users);
         //here the user in IEnumerable of AppUser therefore such a way
         // var userstoReturn=_mapper.Map<IEnumerable<MemberDto>>(user);

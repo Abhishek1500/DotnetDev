@@ -26,3 +26,6 @@ create controller using cli (ng g c name of component)
 21. Rest API format
 22. Rest API statuscode: get(Ok)200 , for update nocontent 204 dont return result,create 201 created,
 deleted send ok but dont send any content
+13. Pagination (header stuff, PaginationList,UserParams)
+14. Action Filter learn it well
+15. Look into ClaimsPrincipalExtension Id thing is not working
