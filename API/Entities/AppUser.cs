@@ -33,10 +33,9 @@ public class AppUser{
 
      public List<UserLike> LikedByUser {get;set;}
      public List<UserLike> LikedUser {get;set;}
-    //here the auto mapper will be  good enough to know that GetAge is for Age but remember that Get Age name and Get is required
-   //   public int GetAge(){
-   //      return DateOfBirth.CalculateAge();
-   //   }
+
+     public List<Message> MessagesSent {get; set;}
+     public List<Message> MessagesReceived {get; set;}
 
 
 }
